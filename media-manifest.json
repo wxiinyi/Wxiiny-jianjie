@@ -3,26 +3,31 @@
   "files": [
     {
       "name": "我的大学我的期待-第一集.mp4",
+      "asset_name": "episode-1-original.mp4",
       "bytes": 117220198,
       "sha256": "e7bab9759cd7da3f69e898e4403a9f8d79376c52f011367d8640f6ad68df7f79"
     },
     {
       "name": "我的大学我的期待-第二集.mp4",
+      "asset_name": "episode-2-original.mp4",
       "bytes": 309799633,
       "sha256": "a663f132ff42b5969b015e5073f77c35d518ad0e225939a4d1c7aa27c997a84a"
     },
     {
       "name": "我的大学我的期待-第三集.mp4",
+      "asset_name": "episode-3-original.mp4",
       "bytes": 221040778,
       "sha256": "9ae1de82285c503390b5b53e9014353fba0043f90b908ec9a5d43a5e2c6f6290"
     },
     {
       "name": "我的大学我的期待-第四集.mp4",
+      "asset_name": "episode-4-original.mp4",
       "bytes": 378386337,
       "sha256": "30e9b306141a5dfff3ea6fc9d09e7a12732d656e494afe86e02e54da772bad2c"
     },
     {
       "name": "25级建环答辩视频.mp4",
+      "asset_name": "25.mp4",
       "bytes": 28491623,
       "sha256": "da341d00cc104bf82217936f4efd0246bda7aec744da979cc858e4b2725b5d8d"
     }
