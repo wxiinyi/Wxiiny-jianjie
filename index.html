@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wxiiny-jianjie</title>
+<style>
+  :root{
+    --red:#c8102e;--red-deep:#9d0c24;--gold:#c9a227;--gold-light:#e8c75a;
+    --ink:#1f2329;--ink-soft:#4a5159;--line:#eceef2;--bg:#f6f7fb;--card:#ffffff;
+    --shadow:0 10px 30px rgba(31,35,41,.08);--shadow-hover:0 18px 48px rgba(200,16,46,.16);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"PingFang SC","Microsoft YaHei","Source Han Sans SC",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+  /* 顶部导航 */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);box-shadow:0 2px 12px rgba(31,35,41,.04)}
+  .topbar-inner{max-width:1080px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:16px}
+  .topbar .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;letter-spacing:2px;color:var(--red-deep);cursor:pointer}
+  .topbar .logo .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(var(--red),var(--gold))}
+  .topbar .nav{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+  .topbar .nav a{font-size:14px;color:var(--ink-soft);text-decoration:none;padding:8px 14px;border-radius:10px;transition:all .25s;cursor:pointer}
+  .topbar .nav a:hover{background:#fbe9ec;color:var(--red)}
+  .topbar .nav a.active{background:var(--red);color:#fff}
+
+  section{padding:38px 0}
+  .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+  .sec-head .bar{width:6px;height:30px;border-radius:4px;background:linear-gradient(var(--red),var(--gold))}
+  .sec-head h2{font-size:26px;font-weight:800;letter-spacing:2px}
+  .sec-head .en{font-size:13px;color:#b6bdc7;letter-spacing:3px;text-transform:uppercase;margin-left:4px}
+  .sec-head .tag{margin-left:auto;font-size:13px;color:var(--red);background:#fbe9ec;padding:4px 12px;border-radius:8px;font-weight:600}
+
+  /* Hero（个人简介） */
+  .hero{position:relative;margin-top:24px;border-radius:26px;overflow:hidden;background:linear-gradient(135deg,#c8102e 0%,#9d0c24 55%,#7a0a1c 100%);color:#fff;box-shadow:var(--shadow)}
+  .hero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 12%,rgba(232,199,90,.35),transparent 42%),radial-gradient(circle at 10% 90%,rgba(255,255,255,.10),transparent 38%);pointer-events:none}
+  .hero::after{content:"";position:absolute;right:-60px;top:-60px;width:240px;height:240px;border:2px solid rgba(232,199,90,.35);border-radius:50%}
+  .hero-inner{position:relative;z-index:2;display:flex;align-items:center;gap:42px;padding:46px 48px}
+  .photo{flex:0 0 auto;width:168px;height:224px;border-radius:18px;overflow:hidden;border:4px solid rgba(255,255,255,.9);box-shadow:0 14px 40px rgba(0,0,0,.3);background:#fff}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .hero-text{flex:1 1 auto;min-width:0}
+  .hero-text .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:2px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(232,199,90,.5);color:var(--gold-light);margin-bottom:18px}
+  .hero-text h1{font-size:46px;font-weight:800;letter-spacing:4px;margin-bottom:10px}
+  .hero-text .sub{font-size:18px;opacity:.92;margin-bottom:14px;letter-spacing:1px}
+  .hero-text .quote{font-size:14px;opacity:.85;margin-bottom:20px;max-width:620px}
+  .tags{display:flex;flex-wrap:wrap;gap:10px}
+  .tags span{font-size:14px;padding:7px 16px;border-radius:10px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25)}
+  .tags span.gold{background:rgba(232,199,90,.22);border-color:rgba(232,199,90,.6);color:#fff}
+
+  /* Hero（竞赛/技能页） */
+  .hero-simple{position:relative;margin-top:24px;border-radius:26px;overflow:hidden;background:linear-gradient(135deg,#c8102e 0%,#9d0c24 55%,#7a0a1c 100%);color:#fff;box-shadow:var(--shadow)}
+  .hero-simple::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 12%,rgba(232,199,90,.35),transparent 42%),radial-gradient(circle at 10% 90%,rgba(255,255,255,.10),transparent 38%);pointer-events:none}
+  .hero-simple-inner{position:relative;z-index:2;padding:40px 48px}
+  .hero-simple .badge{display:inline-flex;align-items:center;gap:8px;font-size:13px;letter-spacing:2px;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(232,199,90,.5);color:var(--gold-light);margin-bottom:16px}
+  .hero-simple h1{font-size:38px;font-weight:800;letter-spacing:4px;margin-bottom:8px}
+  .hero-simple .sub{font-size:16px;opacity:.92;max-width:720px}
+  .hero-simple .stats{display:flex;gap:24px;margin-top:22px;flex-wrap:wrap}
+  .hero-simple .stats .st{display:flex;align-items:baseline;gap:6px}
+  .hero-simple .stats .st .n{font-size:30px;font-weight:800;color:var(--gold-light)}
+  .hero-simple .stats .st .l{font-size:13px;opacity:.85}
+
+  /* intro */
+  .intro{background:var(--card);border-radius:20px;padding:30px 34px;box-shadow:var(--shadow);border-left:5px solid var(--red);font-size:16px;color:var(--ink-soft)}
+  .intro strong{color:var(--red-deep)}
+
+  /* info grid */
+  .info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .info-item{background:var(--card);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow);border:1px solid var(--line);transition:transform .25s,box-shadow .25s}
+  .info-item:hover{transform:translateY(-4px);box-shadow:var(--shadow-hover)}
+  .info-item .k{font-size:12px;color:#9aa2ad;letter-spacing:1px;margin-bottom:5px}
+  .info-item .v{font-size:15px;font-weight:600;color:var(--ink)}
+
+  /* advantage */
+  .adv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+  .adv{position:relative;background:var(--card);border-radius:16px;padding:24px 22px;box-shadow:var(--shadow);border-top:3px solid var(--red);transition:transform .25s,box-shadow .25s;overflow:hidden}
+  .adv:nth-child(2){border-top-color:var(--gold)}
+  .adv:nth-child(3){border-top-color:#2f6fed}
+  .adv:nth-child(4){border-top-color:#9b59b6}
+  .adv:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover)}
+  .adv .num{font-size:34px;font-weight:800;color:#f0e6c4;position:absolute;right:14px;top:6px;line-height:1}
+  .adv h3{font-size:17px;font-weight:700;margin-bottom:8px;position:relative}
+  .adv p{font-size:13.5px;color:var(--ink-soft);position:relative}
+
+  /* roles */
+  .roles{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .role{position:relative;background:var(--card);border-radius:16px;padding:24px;box-shadow:var(--shadow);border-top:3px solid var(--gold);transition:transform .25s,box-shadow .25s}
+  .role:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover)}
+  .role .ico{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--red),var(--red-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:14px}
+  .role h3{font-size:17px;font-weight:700;margin-bottom:6px}
+  .role p{font-size:13.5px;color:var(--ink-soft)}
+
+  /* ability（个人简介页核心能力） */
+  .ability-group{margin-bottom:28px}
+  .ability-group:last-child{margin-bottom:0}
+  .ag-title{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;margin-bottom:14px;color:var(--ink)}
+  .ag-title .dot{width:10px;height:10px;border-radius:50%;background:var(--red)}
+  .ag-title .dot.g{background:var(--gold)}.ag-title .dot.b{background:#2f6fed}.ag-title .dot.p{background:#9b59b6}
+  .abilities{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+  .ability{position:relative;overflow:hidden;background:var(--card);border-radius:14px;padding:18px 16px;box-shadow:var(--shadow);border:1px solid var(--line);transition:transform .25s,box-shadow .25s,border-color .25s}
+  .ability:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover);border-color:var(--red)}
+  .ability::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--red),var(--gold));opacity:0;transition:opacity .25s}
+  .ability:hover::before{opacity:1}
+  .ability .name{font-size:15px;font-weight:700;margin-bottom:5px}
+  .ability .desc{font-size:12.5px;color:var(--ink-soft);line-height:1.55}
+  .ability .lv{display:inline-block;font-size:11px;color:var(--red);background:#fbe9ec;padding:2px 8px;border-radius:6px;margin-top:7px;letter-spacing:1px}
+
+  /* honor（个人简介页获奖荣誉） */
+  .honors{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .honor{position:relative;overflow:hidden;background:linear-gradient(135deg,#fff 0%,#fff8e6 100%);border-radius:18px;padding:24px;box-shadow:var(--shadow);border:1px solid #f0e6c4;transition:transform .3s,box-shadow .3s}
+  .honor:hover{transform:translateY(-6px);box-shadow:0 22px 56px rgba(201,162,39,.28)}
+  .honor .medal{position:absolute;right:-18px;top:-18px;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold));opacity:.18}
+  .honor .ribbon{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1px;color:#8a6d12;background:#fff3cf;padding:4px 10px;border-radius:999px;margin-bottom:12px;border:1px solid #ecd99a}
+  .honor h3{font-size:16.5px;font-weight:800;color:var(--red-deep);margin-bottom:6px;position:relative;z-index:2}
+  .honor .when{font-size:12.5px;color:#a8862c;margin-bottom:10px;position:relative;z-index:2}
+  .honor p{font-size:13px;color:var(--ink-soft);position:relative;z-index:2}
+
+  /* timeline */
+  .tl{position:relative;padding-left:28px}
+  .tl::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--red),var(--gold))}
+  .tl .item{position:relative;margin-bottom:18px;background:var(--card);border-radius:14px;padding:16px 20px;box-shadow:var(--shadow);border-left:3px solid var(--red)}
+  .tl .item::before{content:"";position:absolute;left:-24px;top:22px;width:14px;height:14px;border-radius:50%;background:var(--red);border:3px solid #fff;box-shadow:0 0 0 2px var(--red)}
+  .tl .item h4{font-size:16px;font-weight:700;margin-bottom:4px}
+  .tl .item p{font-size:13.5px;color:var(--ink-soft)}
+  .vol-stats{display:flex;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+  .vol-stats .vs{flex:1;min-width:140px;background:linear-gradient(135deg,var(--red),var(--red-deep));color:#fff;border-radius:14px;padding:18px 20px;box-shadow:var(--shadow)}
+  .vol-stats .vs .n{font-size:28px;font-weight:800}
+  .vol-stats .vs .l{font-size:13px;opacity:.9}
+  .vol-stats .vs.g{background:linear-gradient(135deg,var(--gold),#a8862c)}
+
+  /* art */
+  .art-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .art{background:var(--card);border-radius:16px;padding:24px;box-shadow:var(--shadow);border-left:4px solid var(--gold)}
+  .art h3{font-size:17px;font-weight:700;margin-bottom:8px;color:var(--red-deep)}
+  .art p{font-size:14px;color:var(--ink-soft)}
+  .art .work{display:inline-block;margin-top:10px;font-size:12px;color:#8a6d12;background:#fff3cf;padding:4px 10px;border-radius:8px;border:1px solid #ecd99a}
+
+  /* 竞赛卡片（竞赛页） */
+  .awards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .award{position:relative;overflow:hidden;background:linear-gradient(135deg,#fff 0%,#fff8e6 100%);border-radius:18px;padding:24px;box-shadow:var(--shadow);border:1px solid #f0e6c4;cursor:pointer;transition:transform .3s,box-shadow .3s}
+  .award:hover{transform:translateY(-6px);box-shadow:0 22px 56px rgba(201,162,39,.28)}
+  .award .medal{position:absolute;right:-18px;top:-18px;width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold));opacity:.18}
+  .award .ribbon{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1px;background:#fff3cf;padding:4px 10px;border-radius:999px;margin-bottom:12px;border:1px solid #ecd99a;color:#8a6d12}
+  .award .ribbon.r1{background:#fbe9ec;border-color:#f3c2cb;color:var(--red-deep)}
+  .award .ribbon.r2{background:#e8f0fe;border-color:#c5d7f5;color:#2f6fed}
+  .award h3{font-size:17px;font-weight:800;color:var(--red-deep);margin-bottom:6px;position:relative;z-index:2}
+  .award .when{font-size:12.5px;color:#a8862c;margin-bottom:10px;position:relative;z-index:2}
+  .award p{font-size:13px;color:var(--ink-soft);position:relative;z-index:2;margin-bottom:12px}
+  .award .go{position:relative;z-index:2;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--red);letter-spacing:1px}
+  .award .go::after{content:"→";transition:transform .25s}
+  .award:hover .go::after{transform:translateX(4px)}
+
+  /* 技能卡片（技能页） */
+  .skill-group{margin-bottom:30px}
+  .skill-group:last-child{margin-bottom:0}
+  .sg-title{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;margin-bottom:16px;color:var(--ink)}
+  .sg-title .dot{width:11px;height:11px;border-radius:50%;background:var(--red)}
+  .sg-title .dot.g{background:var(--gold)}.sg-title .dot.b{background:#2f6fed}.sg-title .dot.p{background:#9b59b6}
+  .sg-title .cnt{margin-left:6px;font-size:13px;color:#9aa2ad;font-weight:400}
+  .skills{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .skill{position:relative;overflow:hidden;background:var(--card);border-radius:14px;padding:20px 18px;box-shadow:var(--shadow);border:1px solid var(--line);cursor:pointer;transition:transform .25s,box-shadow .25s,border-color .25s}
+  .skill:hover{transform:translateY(-5px);box-shadow:var(--shadow-hover);border-color:var(--red)}
+  .skill::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(var(--red),var(--gold));opacity:0;transition:opacity .25s}
+  .skill:hover::before{opacity:1}
+  .skill .ico{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--red),var(--red-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:10px}
+  .skill.g .ico{background:linear-gradient(135deg,var(--gold),#a8862c)}
+  .skill.b .ico{background:linear-gradient(135deg,#2f6fed,#1d54c4)}
+  .skill.p .ico{background:linear-gradient(135deg,#9b59b6,#7d3f8e)}
+  .skill .name{font-size:15.5px;font-weight:700;margin-bottom:4px}
+  .skill .desc{font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin-bottom:8px}
+  .skill .lv{display:inline-block;font-size:11px;color:var(--red);background:#fbe9ec;padding:2px 8px;border-radius:6px;letter-spacing:1px}
+  .skill .lv.g{color:#8a6d12;background:#fff3cf}
+  .skill .lv.b{color:#2f6fed;background:#e8f0fe}
+  .skill .lv.p{color:#7d3f8e;background:#f3e8f7}
+
+  /* 详情页 */
+  .detail{display:none;animation:fade .4s ease}
+  .detail.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+  .back-btn{display:inline-flex;align-items:center;gap:8px;margin:24px 0 18px;padding:10px 18px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);cursor:pointer;font-size:14px;font-weight:600;color:var(--ink);transition:all .25s}
+  .back-btn:hover{background:var(--red);color:#fff;border-color:var(--red);transform:translateX(-4px)}
+  .back-btn::before{content:"←"}
+  .detail-card{background:var(--card);border-radius:22px;overflow:hidden;box-shadow:var(--shadow);margin-bottom:24px}
+  .detail-head{padding:32px 38px;background:linear-gradient(135deg,#c8102e 0%,#9d0c24 100%);color:#fff;position:relative;overflow:hidden}
+  .detail-head::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border:2px solid rgba(232,199,90,.35);border-radius:50%}
+  .detail-head .ribbon{display:inline-flex;align-items:center;gap:6px;font-size:12px;letter-spacing:1px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(232,199,90,.5);color:var(--gold-light);margin-bottom:14px}
+  .detail-head h2{font-size:30px;font-weight:800;letter-spacing:2px;margin-bottom:8px;position:relative;z-index:2}
+  .detail-head .meta{font-size:14px;opacity:.92;position:relative;z-index:2}
+  .detail-body{padding:32px 38px}
+  .detail-body .row{display:flex;gap:16px;padding:12px 0;border-bottom:1px dashed var(--line)}
+  .detail-body .row:last-child{border-bottom:none}
+  .detail-body .row .k{flex:0 0 110px;font-size:13px;color:#9aa2ad;letter-spacing:1px;font-weight:600}
+  .detail-body .row .v{flex:1;font-size:15px;color:var(--ink);font-weight:500}
+  .detail-body .desc{margin-top:18px;padding:18px 20px;background:#fff8e6;border-left:4px solid var(--gold);border-radius:10px;font-size:14.5px;color:var(--ink-soft);line-height:1.85}
+
+  /* 证书图片 */
+  .cert-show{text-align:center;margin-top:24px}
+  .cert-show .cert-img{display:inline-block;max-width:420px;width:100%;border-radius:14px;overflow:hidden;box-shadow:0 18px 48px rgba(0,0,0,.18);border:6px solid #fff;transition:transform .3s;cursor:zoom-in}
+  .cert-show .cert-img:hover{transform:scale(1.03)}
+  .cert-show .cert-img img{width:100%;display:block}
+  .cert-show .cap{margin-top:14px;font-size:13px;color:#9aa2ad;letter-spacing:1px}
+
+  /* 技能详情 */
+  .skill-detail-body{padding:32px 38px}
+  .skill-detail-body .sd-ico{width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--red),var(--red-deep));color:#fff;display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:16px}
+  .skill-detail-body .sd-ico.g{background:linear-gradient(135deg,var(--gold),#a8862c)}
+  .skill-detail-body .sd-ico.b{background:linear-gradient(135deg,#2f6fed,#1d54c4)}
+  .skill-detail-body .sd-ico.p{background:linear-gradient(135deg,#9b59b6,#7d3f8e)}
+  .feature-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+  .feature-list .fi{background:var(--bg);border-radius:12px;padding:16px 18px;border-left:3px solid var(--red)}
+  .feature-list .fi.g{border-left-color:var(--gold)}
+  .feature-list .fi.b{border-left-color:#2f6fed}
+  .feature-list .fi.p{border-left-color:#9b59b6}
+  .feature-list .fi h4{font-size:15px;font-weight:700;margin-bottom:4px}
+  .feature-list .fi p{font-size:13px;color:var(--ink-soft)}
+
+  /* 视频/作品区 */
+  .media-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:20px}
+  .works-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:18px}
+  .works-grid .wi{position:relative;border-radius:10px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:1/1;cursor:pointer;background:#000}
+  .works-grid .wi img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+  .works-grid .wi:hover img{transform:scale(1.08)}
+  .works-grid .wi::after{content:"🔍";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);color:#fff;font-size:18px;opacity:0;transition:opacity .25s}
+  .works-grid .wi:hover::after{opacity:1}
+  .media-grid .mi{position:relative;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/3;cursor:pointer;background:#000}
+  .media-grid .mi img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
+  .media-grid .mi:hover img{transform:scale(1.06)}
+  .media-grid .mi .label{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(0,0,0,.78));color:#fff;font-size:12.5px;padding:22px 12px 10px;text-align:center}
+  .video-box{margin-top:20px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);background:#1f2329;color:#cfd4dc;padding:28px 30px;text-align:center}
+  .video-box .vt{font-size:16px;font-weight:700;color:#fff;margin-bottom:6px}
+  .video-box .vd{font-size:13px;color:#9aa2ad;margin-bottom:14px}
+  .video-box .placeholder{border:2px dashed rgba(232,199,90,.4);border-radius:12px;padding:30px;color:var(--gold-light);font-size:14px;letter-spacing:1px}
+  .video-box .placeholder::before{content:"▶";display:block;font-size:34px;margin-bottom:8px;color:var(--gold)}
+  .video-list{display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+  .vbtn{padding:8px 20px;border-radius:999px;border:1px solid rgba(232,199,90,.4);background:transparent;color:#cfd4dc;font-size:13px;cursor:pointer;transition:all .25s;letter-spacing:1px}
+  .vbtn:hover{background:rgba(232,199,90,.15);color:var(--gold-light)}
+  .vbtn.active{background:var(--gold);color:#1f2329;border-color:var(--gold);font-weight:600}
+
+  /* footer */
+  footer{margin-top:20px;background:linear-gradient(135deg,#1f2329,#2d3340);color:#cfd4dc;border-radius:22px;padding:30px 38px}
+  footer .ft-title{color:#fff;font-size:17px;font-weight:700;margin-bottom:10px;letter-spacing:1px}
+  footer p{font-size:13.5px;line-height:1.9}
+  footer .sign{margin-top:14px;font-size:12.5px;color:#8b939e}
+
+  @media (max-width:820px){
+    .hero-inner{flex-direction:column;text-align:center;gap:26px;padding:36px 24px}
+    .photo{width:150px;height:200px}.hero-text h1{font-size:34px}
+    .tags{justify-content:center}
+    .info-grid,.adv-grid,.roles,.abilities,.honors,.art-grid{grid-template-columns:1fr 1fr}
+    .awards{grid-template-columns:1fr 1fr}
+    .skills{grid-template-columns:1fr 1fr}
+    .feature-list{grid-template-columns:1fr}
+    .media-grid{grid-template-columns:1fr 1fr}
+    .works-grid{grid-template-columns:repeat(3,1fr)}
+    .detail-head,.detail-body,.skill-detail-body{padding:24px 22px}
+    .hero-simple-inner{padding:32px 24px}.hero-simple h1{font-size:28px}
+    section{padding:28px 0}
+  }
+  @media (max-width:520px){
+    .info-grid,.adv-grid,.roles,.abilities,.honors,.art-grid,.awards,.skills,.media-grid{grid-template-columns:1fr}
+    .works-grid{grid-template-columns:1fr 1fr}
+    .hero-text h1{font-size:28px;letter-spacing:2px}
+    .hero-simple h1{font-size:24px;letter-spacing:2px}
+  }
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo" id="navLogo"><span class="dot"></span>Wxiiny-jianjie</div>
+    <div class="nav">
+      <a id="navHome" class="active">个人简介</a>
+      <a id="navAward">竞赛荣誉</a>
+      <a id="navSkill">技能能力</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ 页面1：个人简介 ============ -->
+  <div id="pageHome">
+
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="photo"><img src="wangxinyi-photo.jpg" alt="王馨怡证件照"></div>
+        <div class="hero-text">
+          <span class="badge">WANGXINYI/XYXY  XYDD</span>
+          <h1>王 馨 怡</h1>
+          <p class="sub">武汉商学院 · 新能源与低碳产业学院 · 2025级建筑环境与能源应用工程</p>
+          <p class="quote">一名来自湖北省十堰市的开朗女孩，有着极强的奉献精神、上进心、责任心，热情开朗、积极向上</p>
+          <div class="tags">
+            <span class="gold">共青团员</span>
+            <span>班长 · 团支书</span>
+            <span>星火青年讲师团</span>
+            <span>武汉商学院青年志愿者协会</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>个人简介</h2><span class="en">PROFILE</span></div>
+      <div class="intro">
+        <strong>王馨怡</strong>，女，2007年4月出生，汉族，共青团员，籍贯<strong>湖北省十堰市</strong>，现就读于<strong>武汉商学院新能源与低碳产业学院</strong>建筑环境与能源应用工程专业（2025级）。性格开朗、擅长交流，具备优秀的组织能力、语言表达能力与随机应变能力，能够凝聚团队力量、使成员各司其职。在校期间担任班长兼团支书、学院主席团执行主席等多项职务，长期投身志愿服务与社会实践，具备扎实的团务工作基础与突出的组织协调、文字宣传、沟通执行与应急处理能力。
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>基本信息</h2><span class="en">BASIC INFO</span></div>
+      <div class="info-grid">
+        <div class="info-item"><div class="k">所在学校</div><div class="v">武汉商学院</div></div>
+        <div class="info-item"><div class="k">所在学院</div><div class="v">新能源与低碳产业学院</div></div>
+        <div class="info-item"><div class="k">专业年级</div><div class="v">建筑环境与能源应用工程 · 2025级</div></div>
+        <div class="info-item"><div class="k">出生年月</div><div class="v">2007年4月</div></div>
+        <div class="info-item"><div class="k">籍　　贯</div><div class="v">湖北省十堰市</div></div>
+        <div class="info-item"><div class="k">民族 / 政治面貌</div><div class="v">汉族 · 共青团员</div></div>
+        <div class="info-item"><div class="k">联系电话</div><div class="v">19267255908</div></div>
+        <div class="info-item"><div class="k">QQ 邮箱</div><div class="v">2879016442@qq.com</div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>个人优势</h2><span class="en">ADVANTAGES</span></div>
+      <div class="adv-grid">
+        <div class="adv"><div class="num">01</div><h3>性格优势</h3><p>性格开朗，擅长交流，作为"超 e 人"，能在不同场合活跃气氛、带动大家情绪。</p></div>
+        <div class="adv"><div class="num">02</div><h3>应变优势</h3><p>具有超强的随机应变能力，能够从容面对各种场合、精准应对各种突发情况。</p></div>
+        <div class="adv"><div class="num">03</div><h3>问题解决能力</h3><p>拥有严密的逻辑性，能避开情绪精准发现根本性问题，规划出最优解决方桉。</p></div>
+        <div class="adv"><div class="num">04</div><h3>团结力 · 凝聚力</h3><p>具有极强的集体意识和责任心，团结一切能够团结的力量，凝聚团魂。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>担任过职务</h2><span class="en">EXPERIENCES</span></div>
+      <div class="roles">
+        <div class="role"><div class="ico">①</div><h3>班长 兼 团支书</h3><p>明白责任心的重要性，凝聚同学、团结一切能够团结的力量，历练了与不同性格人的交往交流能力和组织能力，带领班级获评"优秀班集体"。</p></div>
+        <div class="role"><div class="ico">②</div><h3>新能源与低碳产业学院主席团 执行主席</h3><p>主席的职位承载的不仅是某一方面能力，更是综合能力，学会将各方面能力结合运用，心境得以历练，成为不畏压力、更加坚韧的人。</p></div>
+        <div class="role"><div class="ico">③</div><h3>校青年志愿者协会</h3><p>精进统筹能力与策划书写能力，深刻明白"奉献友爱互助进步"的志愿者精神与团结能力，坚定留在青协大家庭的决心。</p></div>
+        <div class="role"><div class="ico">④</div><h3>星火青年讲师团</h3><p>从一个开朗健谈的人，变成能够将故事润色、变得生动形象、深入人心的人，明白表达和语言的艺术，锻炼了叙事能力。</p></div>
+        <div class="role"><div class="ico">⑤</div><h3>机电工程学院 信宣部</h3><p>拍摄、导演能力，逻辑思维与情节设计连贯能力得以提升，精进公众号发表能力和官方文字编辑能力。</p></div>
+        <div class="role"><div class="ico">⑥</div><h3>第36期青马工程 团干培训</h3><p>参加第36期"青年马克思主义者培养工程"团干培训班，提升理论素养与实践能力，获评"优秀组员"。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>核心能力</h2><span class="en">CORE COMPETENCIES</span><span class="tag">重点突出</span></div>
+      <div class="ability-group">
+        <div class="ag-title"><span class="dot"></span>综合工作能力</div>
+        <div class="abilities">
+          <div class="ability"><div class="name">组织协调</div><div class="desc">统筹班级与团支部建设，协调同学关系、落实集体任务。</div><span class="lv">突出</span></div>
+          <div class="ability"><div class="name">统筹策划</div><div class="desc">活动策划书撰写、人员分工与流程统筹。</div><span class="lv">突出</span></div>
+          <div class="ability"><div class="name">沟通执行</div><div class="desc">信息通知、意见收集、任务推进，高效到位。</div><span class="lv">突出</span></div>
+          <div class="ability"><div class="name">应急应变</div><div class="desc">从容应对突发情况，沉稳果断、随机应变。</div><span class="lv">扎实</span></div>
+          <div class="ability"><div class="name">语言表达</div><div class="desc">演讲、宣讲、主持串联，表达生动深入人心。</div><span class="lv">突出</span></div>
+          <div class="ability"><div class="name">逻辑思维</div><div class="desc">严密逻辑性，精准定位根本问题，规划最优方桉。</div><span class="lv">强</span></div>
+        </div>
+      </div>
+      <div class="ability-group">
+        <div class="ag-title"><span class="dot g"></span>宣传与新媒体能力</div>
+        <div class="abilities">
+          <div class="ability"><div class="name">文字编辑</div><div class="desc">官方文字编辑、新闻信息、活动预告与成果展示文案。</div><span class="lv">熟练</span></div>
+          <div class="ability"><div class="name">文本撰写</div><div class="desc">文本创作与活动策划文案撰写。</div><span class="lv">擅长</span></div>
+          <div class="ability"><div class="name">摄影摄像</div><div class="desc">活动现场记录、图片归档与影像素材采集。</div><span class="lv">熟练</span></div>
+          <div class="ability"><div class="name">导演拍摄</div><div class="desc">微视频导演与拍摄，情节设计连贯。</div><span class="lv">擅长</span></div>
+          <div class="ability"><div class="name">公众号运营</div><div class="desc">公众号内容策划、排版制作与发布维护。</div><span class="lv">熟练</span></div>
+          <div class="ability"><div class="name">PPT 制作</div><div class="desc">汇报、宣讲与活动 PPT 视觉设计。</div><span class="lv">熟练</span></div>
+          <div class="ability"><div class="name">视频剪辑</div><div class="desc">活动短视频策划、剪辑与成果展示制作。</div><span class="lv">熟练</span></div>
+        </div>
+      </div>
+      <div class="ability-group">
+        <div class="ag-title"><span class="dot p"></span>兴趣特长（可服务青年文化建设）</div>
+        <div class="abilities">
+          <div class="ability"><div class="name">唱 歌</div><div class="desc">可参与节目策划与现场演出。</div></div>
+          <div class="ability"><div class="name">跳 舞</div><div class="desc">可参与文艺活动编排与表演。</div></div>
+          <div class="ability"><div class="name">书 法</div><div class="desc">可组织书法体验与文化交流活动。</div></div>
+          <div class="ability"><div class="name">字 画</div><div class="desc">可参与视觉设计与美术活动指导。</div></div>
+          <div class="ability"><div class="name">演 讲</div><div class="desc">可承担主持串联与主题宣讲。</div></div>
+          <div class="ability"><div class="name">剧情编导</div><div class="desc">可策划节目结构与情景剧编排。</div></div>
+          <div class="ability"><div class="name">活动策划</div><div class="desc">主题、对象、分工、流程一体化设计。</div></div>
+          <div class="ability"><div class="name">活动主持</div><div class="desc">串联现场、把控流程、活跃氛围。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>获奖荣誉</h2><span class="en">HONORS &amp; AWARDS</span><span class="tag">重点突出</span></div>
+      <div class="honors">
+        <div class="honor"><div class="medal"></div><span class="ribbon">★ 集体荣誉</span><h3>"优秀班集体"</h3><div class="when">2025—2026 学年度</div><p>担任班长兼团支书，带领班级取得"优秀班集体"奖项，凝聚同学、落实任务，班级与团支部建设成效显著。</p></div>
+        <div class="honor"><div class="medal"></div><span class="ribbon">★ 个人荣誉</span><h3>"优秀组员"</h3><div class="when">第36期青马工程团干培训班</div><p>参加第36期"青年马克思主义者培养工程"团干培训，提升理论素养与实践能力，获评"优秀组员"。</p></div>
+        <div class="honor"><div class="medal"></div><span class="ribbon">★ 集体荣誉</span><h3>杰出防艾志愿服务集体</h3><div class="when">校青年志愿者协会</div><p>所在集体获评"杰出防艾志愿服务集体"。</p></div>
+        <div class="honor"><div class="medal"></div><span class="ribbon">★ 个人荣誉</span><h3>"优秀志愿者"</h3><div class="when">"返家乡"社会实践活动</div><p>寒假期间参与"返家乡"社会实践活动，服务扎实、表现优异，获评"优秀志愿者"并获单位好评。</p></div>
+        <div class="honor"><div class="medal"></div><span class="ribbon">★ 赛事奖项</span><h3>"三行情书，见字如面" 三等奖</h3><div class="when">校园文化活动</div><p>参加"三行情书，见字如面"活动，文字创作与表达能力突出，荣获三等奖。</p></div>
+        <div class="honor"><div class="medal"></div><span class="ribbon">★ 赛事奖项</span><h3>校园配音大赛</h3><div class="when">校级赛事</div><p>多次在英语演讲、话剧展演等赛事中斩获奖项，语言表达与舞台表现力突出。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>志愿服务与社会实践</h2><span class="en">VOLUNTEER &amp; PRACTICE</span></div>
+      <div class="vol-stats">
+        <div class="vs g"><div class="n">6+ 项</div><div class="l">志愿服务与社会实践经历</div></div>
+      </div>
+      <div class="tl">
+        <div class="item"><h4>基础服务类志愿保障</h4><p>大学期间参与社区生活节、社团嘉年华、校园招聘会等志愿保障工作，践行服务初心。</p></div>
+        <div class="item"><h4>第36期青马实践活动</h4><p>参加第36期"青年马克思主义者培养工程"实践活动，提升理论素养与实践能力，获"优秀组员"。</p></div>
+        <div class="item"><h4>武汉市运会送温暖服务</h4><p>作为青年志愿者为武汉市运动会提供送温暖服务，助力城市赛事。</p></div>
+        <div class="item"><h4>校园文化微视频创作</h4><p>策划制作系列微视频《我的大学，我的期待》，以及各项赛事视频，用影像记录校园生活、传递青年态度，作品发布于机电工程学院公众号。</p></div>
+        <div class="item"><h4>寒假"返家乡"社会实践</h4><p>寒假期间参与"返家乡"社会实践活动，服务扎实、获单位好评，并获评"优秀志愿者"。</p></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><div class="bar"></div><h2>艺术发展与作品</h2><span class="en">ART &amp; WORKS</span></div>
+      <div class="art-grid">
+        <div class="art">
+          <h3>校园文化微视频创作</h3>
+          <p>策划并带领完成系列微视频《我的大学，我的期待》，用影像记录校园生活、传递青年态度，展现校园文化活力。从导演、拍摄到剪辑、公众号发表全流程主导。</p>
+          <span class="work">作品发布于机电工程学院公众号</span>
+        </div>
+        <div class="art">
+          <h3>舞台艺术与语言表达</h3>
+          <p>拥有唱歌、跳舞、书法、字画、剧情编导等兴趣特长，多次在英语演讲、话剧展演等赛事中斩获奖项，语言表达与舞台表现力突出，可承担节目策划、主持串联与现场组织。</p>
+          <span class="work">英语演讲 / 话剧展演 多次获奖</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ============ 页面2：竞赛荣誉 ============ -->
+  <div id="pageAward" style="display:none">
+    <header class="hero-simple">
+      <div class="hero-simple-inner">
+        <span class="badge">★ 竞赛荣誉与奖项</span>
+        <h1>竞赛荣誉</h1>
+        <p class="sub">王馨怡在校期间获得的各类竞赛奖项、集体荣誉与个人荣誉。点击任意奖项卡片，进入详情页查看对应奖状证书与获奖信息。</p>
+        <div class="stats">
+          <div class="st"><span class="n">6</span><span class="l">项竞赛/荣誉</span></div>
+          <div class="st"><span class="n">3</span><span class="l">项集体荣誉</span></div>
+          <div class="st"><span class="n">2</span><span class="l">项个人荣誉</span></div>
+          <div class="st"><span class="n">2</span><span class="l">项赛事奖项</span></div>
+        </div>
+      </div>
+    </header>
+    <section><div class="sec-head"><div class="bar"></div><h2>全部奖项</h2><span class="en">ALL AWARDS</span><span class="tag">点击查看证书</span></div><div class="awards" id="awardGrid"></div></section>
+  </div>
+
+  <!-- ============ 页面3：技能能力 ============ -->
+  <div id="pageSkill" style="display:none">
+    <header class="hero-simple">
+      <div class="hero-simple-inner">
+        <span class="badge">★ 技能能力与特长</span>
+        <h1>技能能力</h1>
+        <p class="sub">王馨怡的综合工作能力、宣传与新媒体能力及兴趣特长。点击任意技能卡片，进入详情页查看能力要点、相关实践、活动图片与视频展示区。</p>
+        <div class="stats">
+          <div class="st"><span class="n">21</span><span class="l">项技能能力</span></div>
+          <div class="st"><span class="n">6</span><span class="l">综合工作能力</span></div>
+          <div class="st"><span class="n">7</span><span class="l">宣传新媒体</span></div>
+          <div class="st"><span class="n">8</span><span class="l">兴趣特长</span></div>
+        </div>
+      </div>
+    </header>
+    <section><div class="sec-head"><div class="bar"></div><h2>全部技能</h2><span class="en">ALL SKILLS</span><span class="tag">点击查看详情</span></div><div id="skillBox"></div></section>
+  </div>
+
+  <!-- ============ 详情页（竞赛/技能通用） ============ -->
+  <div id="pageDetail" class="detail">
+    <div class="back-btn" id="backBtn">返回列表</div>
+    <div id="detailContent"></div>
+  </div>
+
+  <!-- footer -->
+  <footer>
+    <div class="ft-title">青春寄语</div>
+    <p>不甘囿于既定答案，不困于固有框架。以思辨叩问前路，以实践验证构想。保持思维的锋芒，接纳试错与变数，在探索与突破中，把奇思变成现实，让青春在大胆求索中熠熠生辉。</p>
+    <div class="sign">王馨怡　·　武汉商学院 新能源与低碳产业学院　·　2025级建筑环境与能源应用工程</div>
+  </footer>
+
+</div>
+
+<script>
+/* ========= 数据 ========= */
+var awards = [
+  {id:'a1', ribbon:'集体荣誉', rclass:'r2', title:'"优秀班集体"', when:'2025—2026 学年度', org:'共青团武汉商学院机电工程学院委员会', date:'2025年10月', level:'集体荣誉', cat:'班级建设', desc:'担任班长兼团支书，带领2025级建筑环境与能源应用工程班级在机电工程学院2025-2026学年度班级建设与管理工作中表现优异，被评为"优秀班集体"。凝聚同学、落实任务，班级与团支部建设成效显著。', cert:'assets/cert-2.jpg', cap:'"优秀班集体"荣誉证书'},
+  {id:'a2', ribbon:'个人荣誉', rclass:'r1', title:'"优秀组员"', when:'第36期青马工程团干培训班', org:'共青团武汉商学院委员会', date:'2025年4月', level:'个人荣誉', cat:'理论学习', desc:'参加2025年武汉商学院"青年马克思主义者培养工程"第36期团干培训班，在理论素养与实践能力方面表现优异，被评为"优秀组员"。', cert:'assets/cert-3.jpg', cap:'第36期青马工程"优秀组员"证书'},
+  {id:'a3', ribbon:'集体荣誉', rclass:'r2', title:'杰出防艾志愿服务集体', when:'校青年志愿者协会', org:'武汉商学院青年志愿者协会', date:'2025年度', level:'集体荣誉', cat:'志愿服务', desc:'所在校青年志愿者协会集体获评"杰出防艾志愿服务集体"，参与防艾宣传与志愿服务工作，践行"奉献友爱互助进步"的志愿者精神。', cert:'', cap:''},
+  {id:'a4', ribbon:'个人荣誉', rclass:'r1', title:'"优秀志愿者"', when:'"返家乡"社会实践活动', org:'"返家乡"社会实践活动组织单位', date:'2026年寒假', level:'个人荣誉', cat:'社会实践', desc:'寒假期间参与"返家乡"社会实践活动，服务扎实、表现优异，获评"优秀志愿者"并获单位好评。深入基层、联系群众，在服务中践行青年责任。', cert:'', cap:''},
+  {id:'a5', ribbon:'赛事奖项', rclass:'', title:'"三行情书，见字如面" 三等奖', when:'校园文化活动', org:'共青团武汉商学院机电工程学院委员会', date:'2019年11月', level:'三等奖', cat:'文字创作', desc:'参加"三行情书，见字如面"活动比赛，文字创作与表达能力突出，以精炼三行文字传递深情厚意，荣获三等奖。', cert:'assets/cert-1.jpg', cap:'"三行情书，见字如面"三等奖证书'},
+  {id:'a6', ribbon:'赛事奖项', rclass:'', title:'校园配音大赛 / 英语演讲 / 话剧展演', when:'校级赛事', org:'武汉商学院', date:'在校期间多次获奖', level:'多项奖项', cat:'语言表达与舞台表现', desc:'多次在校园配音大赛、英语演讲、话剧展演等赛事中斩获奖项，语言表达与舞台表现力突出，展现综合艺术素养。', cert:'', cap:''}
+];
+
+var skillGroups = [
+  {title:'综合工作能力', cls:'', dot:'', items:[
+    {id:'s1', ico:'⚙', name:'组织协调', lv:'突出', lvcls:'', desc:'统筹班级与团支部建设，协调同学关系、落实集体任务。', feat:['班级与团支部日常建设统筹','协调不同性格同学关系','落实集体任务分工到人'], works:'担任班长兼团支书，带领班级获评"优秀班集体"。'},
+    {id:'s2', ico:'📋', name:'统筹策划', lv:'突出', lvcls:'', desc:'活动策划书撰写、人员分工与流程统筹。', feat:['活动策划书完整撰写','人员分工与流程统筹','从主题到执行一体化设计'], works:'在校青年志愿者协会精进策划书写能力。'},
+    {id:'s3', ico:'📣', name:'沟通执行', lv:'突出', lvcls:'', desc:'信息通知、意见收集、任务推进，高效到位。', feat:['信息通知高效传达','意见收集与反馈','任务推进执行到位'], works:'担任学院主席团执行主席，综合协调各方。'},
+    {id:'s4', ico:'⚡', name:'应急应变', lv:'扎实', lvcls:'', desc:'从容应对突发情况，沉稳果断、随机应变。', feat:['从容面对各种场合','精准应对突发情况','沉稳果断临场决策'], works:'在各类活动现场多次处理突发状况。'},
+    {id:'s5', ico:'🎤', name:'语言表达', lv:'突出', lvcls:'', desc:'演讲、宣讲、主持串联，表达生动深入人心。', feat:['演讲宣讲生动有力','主持串联把控流程','表达润色深入人心'], works:'星火青年讲师团成员，锻炼叙事与表达艺术。'},
+    {id:'s6', ico:'🧠', name:'逻辑思维', lv:'强', lvcls:'', desc:'严密逻辑性，精准定位根本问题，规划最优方案。', feat:['严密逻辑推理','精准定位根本问题','规划最优解决方案'], works:'在活动策划与问题处理中体现严密逻辑。'}
+  ]},
+  {title:'宣传与新媒体能力', cls:'g', dot:'g', items:[
+    {id:'s7', ico:'✍', name:'文字编辑', lv:'熟练', lvcls:'g', desc:'官方文字编辑、新闻信息、活动预告与成果展示文案。', feat:['官方文字编辑规范','新闻信息撰写','活动预告与成果展示'], works:'机电工程学院信宣部官方文字编辑工作。'},
+    {id:'s8', ico:'📝', name:'文本撰写', lv:'擅长', lvcls:'g', desc:'文本创作与活动策划文案撰写。', feat:['文本创作能力','活动策划文案撰写','内容润色生动形象'], works:'"三行情书，见字如面"活动获三等奖。'},
+    {id:'s9', ico:'📷', name:'摄影摄像', lv:'熟练', lvcls:'g', desc:'活动现场记录、图片归档与影像素材采集。', feat:['活动现场记录','图片归档管理','影像素材采集'], works:'为学院活动提供摄影摄像记录。'},
+    {id:'s10', ico:'🎬', name:'导演拍摄', lv:'擅长', lvcls:'g', desc:'微视频导演与拍摄，情节设计连贯。', feat:['微视频导演能力','拍摄构图与镜头语言','情节设计连贯'], works:'主导系列微视频《我的大学，我的期待》导演拍摄。'},
+    {id:'s11', ico:'📱', name:'公众号运营', lv:'熟练', lvcls:'g', desc:'公众号内容策划、排版制作与发布维护。', feat:['内容策划选题','排版制作美观','发布维护及时'], works:'作品发布于机电工程学院公众号。'},
+    {id:'s12', ico:'📊', name:'PPT 制作', lv:'熟练', lvcls:'g', desc:'汇报、宣讲与活动 PPT 视觉设计。', feat:['汇报PPT设计','宣讲PPT视觉','活动PPT制作'], works:'承担各类汇报与宣讲PPT制作。'},
+    {id:'s13', ico:'✂', name:'视频剪辑', lv:'熟练', lvcls:'g', desc:'活动短视频策划、剪辑与成果展示制作。', feat:['短视频策划剪辑','成果展示视频制作','全流程主导'], works:'活动短视频与微视频全流程剪辑制作。'}
+  ]},
+  {title:'兴趣特长', cls:'p', dot:'p', items:[
+    {id:'s14', ico:'🎵', name:'唱 歌', lv:'特长', lvcls:'p', desc:'可参与节目策划与现场演出。', feat:['节目策划参与','现场演出表现','文艺活动参演'], works:'多次参与文艺活动演出。'},
+    {id:'s15', ico:'💃', name:'跳 舞', lv:'特长', lvcls:'p', desc:'可参与文艺活动编排与表演。', feat:['文艺活动编排','舞蹈表演','舞台展现'], works:'参与文艺活动编排与表演。'},
+    {id:'s16', ico:'🖌', name:'书 法', lv:'特长', lvcls:'p', desc:'可组织书法体验与文化交流活动。', feat:['书法体验组织','文化交流活动','传统文化传承'], works:'可组织书法体验与文化交流活动。'},
+    {id:'s17', ico:'🎨', name:'字 画', lv:'特长', lvcls:'p', desc:'可参与视觉设计与美术活动指导。', feat:['视觉设计参与','美术活动指导','审美能力突出'], works:'参与视觉设计与美术活动。'},
+    {id:'s18', ico:'🗣', name:'演 讲', lv:'特长', lvcls:'p', desc:'可承担主持串联与主题宣讲。', feat:['主题宣讲承担','主持串联现场','语言感染力强'], works:'多次在英语演讲赛事中获奖。'},
+    {id:'s19', ico:'🎭', name:'剧情编导', lv:'特长', lvcls:'p', desc:'可策划节目结构与情景剧编排。', feat:['节目结构策划','情景剧编排','剧情设计连贯'], works:'参与话剧展演等赛事并获奖。'},
+    {id:'s20', ico:'🎉', name:'活动策划', lv:'突出', lvcls:'p', desc:'主题、对象、分工、流程一体化设计。', feat:['主题对象设计','分工流程统筹','一体化方案输出'], works:'策划组织多场校园文化活动。'},
+    {id:'s21', ico:'🎙', name:'活动主持', lv:'突出', lvcls:'p', desc:'串联现场、把控流程、活跃氛围。', feat:['现场串联把控','流程节奏控制','氛围活跃带动'], works:'担任各类活动主持，活跃现场氛围。'}
+  ]}
+];
+
+/* ========= 渲染竞赛 ========= */
+var awardGrid = document.getElementById('awardGrid');
+awards.forEach(function(a){
+  var div = document.createElement('div');
+  div.className = 'award';
+  div.innerHTML = '<div class="medal"></div><span class="ribbon '+a.rclass+'">★ '+a.ribbon+'</span><h3>'+a.title+'</h3><div class="when">'+a.when+'</div><p>'+a.desc.substring(0,46)+'…</p><span class="go">查看证书详情</span>';
+  div.onclick = function(){ showAward(a); };
+  awardGrid.appendChild(div);
+});
+
+/* ========= 渲染技能 ========= */
+var skillBox = document.getElementById('skillBox');
+skillGroups.forEach(function(g){
+  var group = document.createElement('div');
+  group.className = 'skill-group';
+  var html = '<div class="sg-title"><span class="dot '+g.dot+'"></span>'+g.title+'<span class="cnt">（共 '+g.items.length+' 项）</span></div><div class="skills">';
+  g.items.forEach(function(s){
+    html += '<div class="skill '+g.cls+'" data-id="'+s.id+'"><div class="ico">'+s.ico+'</div><div class="name">'+s.name+'</div><div class="desc">'+s.desc+'</div><span class="lv '+s.lvcls+'">'+s.lv+'</span></div>';
+  });
+  html += '</div>';
+  group.innerHTML = html;
+  group.querySelectorAll('.skill').forEach(function(el){
+    el.onclick = function(){
+      var id = el.getAttribute('data-id');
+      var found = null;
+      skillGroups.forEach(function(gg){ gg.items.forEach(function(it){ if(it.id===id) found=it; }); });
+      if(found) showSkill(found, g);
+    };
+  });
+  skillBox.appendChild(group);
+});
+
+/* ========= 页面切换 ========= */
+var pages = {home:document.getElementById('pageHome'), award:document.getElementById('pageAward'), skill:document.getElementById('pageSkill'), detail:document.getElementById('pageDetail')};
+var navs = {home:document.getElementById('navHome'), award:document.getElementById('navAward'), skill:document.getElementById('navSkill')};
+var detailContent = document.getElementById('detailContent');
+var currentListPage = 'award';
+
+function showPage(p){
+  pages.detail.classList.remove('show');
+  Object.keys(pages).forEach(function(k){ if(k!=='detail') pages[k].style.display = 'none'; });
+  if(p==='detail'){ pages.detail.classList.add('show'); }
+  else { pages[p].style.display = 'block'; }
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+function setActiveNav(p){
+  Object.keys(navs).forEach(function(k){ navs[k].classList.remove('active'); });
+  if(navs[p]) navs[p].classList.add('active');
+}
+
+document.getElementById('navLogo').onclick = function(){ showPage('home'); setActiveNav('home'); };
+navs.home.onclick = function(){ showPage('home'); setActiveNav('home'); };
+navs.award.onclick = function(){ showPage('award'); setActiveNav('award'); };
+navs.skill.onclick = function(){ showPage('skill'); setActiveNav('skill'); };
+document.getElementById('backBtn').onclick = function(){ showPage(currentListPage); setActiveNav(currentListPage); };
+
+/* ========= 详情页 ========= */
+function showAward(a){
+  currentListPage = 'award';
+  var certHtml = '';
+  if(a.cert){
+    certHtml = '<div class="cert-show">'+
+      '<div class="cert-img" onclick="openMedia(\''+a.cert+'\')"><img src="'+a.cert+'" alt="'+a.cap+'"></div>'+
+      '<div class="cap">'+a.cap+'（点击图片可放大查看）</div>'+
+    '</div>';
+  } else {
+    certHtml = '<div class="cert-show">'+
+      '<div style="display:inline-block;max-width:420px;width:100%;border:2px dashed #d9dce2;border-radius:14px;padding:48px 20px;color:#9aa2ad;background:#fafbfc;text-align:center">'+
+        '<div style="font-size:40px;margin-bottom:10px">🖼</div>'+
+        '<div style="font-size:14px;letter-spacing:1px">暂无证书图片</div>'+
+        '<div style="font-size:12px;margin-top:6px;color:#b6bdc7">该奖项暂未提供证书/奖状照片</div>'+
+      '</div>'+
+      '<div class="cap">证书图片待补充</div>'+
+    '</div>';
+  }
+  detailContent.innerHTML =
+    '<div class="detail-card">'+
+      '<div class="detail-head">'+
+        '<span class="ribbon">★ '+a.ribbon+'</span>'+
+        '<h2>'+a.title+'</h2>'+
+        '<div class="meta">'+a.when+'　·　'+a.cat+'　·　等级：'+a.level+'</div>'+
+      '</div>'+
+      '<div class="detail-body">'+
+        '<div class="row"><div class="k">颁发机构</div><div class="v">'+a.org+'</div></div>'+
+        '<div class="row"><div class="k">获奖时间</div><div class="v">'+a.date+'</div></div>'+
+        '<div class="row"><div class="k">奖项类别</div><div class="v">'+a.cat+'　·　'+a.ribbon+'</div></div>'+
+        '<div class="row"><div class="k">获奖等级</div><div class="v">'+a.level+'</div></div>'+
+        '<div class="desc">'+a.desc+'</div>'+
+        certHtml+
+      '</div>'+
+    '</div>';
+  Object.keys(navs).forEach(function(k){ navs[k].classList.remove('active'); });
+  showPage('detail');
+}
+
+function showSkill(s, g){
+  currentListPage = 'skill';
+  var featHtml = '';
+  s.feat.forEach(function(f){ featHtml += '<div class="fi '+g.cls+'"><h4>● '+f+'</h4></div>'; });
+  var worksHtml = '';
+  for(var w=1; w<=25; w++){
+    var wn = (w<10?'0':'')+w;
+    worksHtml += '<div class="wi" onclick="openMedia(\'assets/works/work-'+wn+'.jpg\')"><img src="assets/works/work-'+wn+'.jpg" alt="作品 '+w+'"></div>';
+  }
+  var videoItems = [
+    {label:'第一集', file:'我的大学我的期待-第一集.mp4'},
+    {label:'第二集', file:'我的大学我的期待-第二集.mp4'},
+    {label:'第三集', file:'我的大学我的期待-第三集.mp4'},
+    {label:'第四集', file:'我的大学我的期待-第四集.mp4'},
+    {label:'25级建环答辩', file:'25级建环答辩视频.mp4'}
+  ];
+  var videoButtonsHtml = '';
+  videoItems.forEach(function(item, index){
+    videoButtonsHtml += '<button class="vbtn'+(index===0?' active':'')+'" data-src="'+releaseVideoUrl(item.file)+'">'+item.label+'</button>';
+  });
+  detailContent.innerHTML =
+    '<div class="detail-card">'+
+      '<div class="detail-head">'+
+        '<span class="ribbon">★ '+g.title+'</span>'+
+        '<h2>'+s.name+'</h2>'+
+        '<div class="meta">能力等级：'+s.lv+'　·　'+s.desc+'</div>'+
+      '</div>'+
+      '<div class="skill-detail-body">'+
+        '<div class="sd-ico '+g.cls+'">'+s.ico+'</div>'+
+        '<div class="row"><div class="k">能力分类</div><div class="v">'+g.title+'</div></div>'+
+        '<div class="row"><div class="k">能力等级</div><div class="v">'+s.lv+'</div></div>'+
+        '<div class="row"><div class="k">能力描述</div><div class="v">'+s.desc+'</div></div>'+
+        '<div class="desc">相关实践：'+s.works+'</div>'+
+        '<h3 style="margin-top:22px;font-size:17px;font-weight:700;color:var(--ink)">能力要点</h3>'+
+        '<div class="feature-list">'+featHtml+'</div>'+
+        '<h3 style="margin-top:24px;font-size:17px;font-weight:700;color:var(--ink)">相关内容与作品展示</h3>'+
+        '<div class="works-grid">'+worksHtml+'</div>'+
+        '<div class="video-box">'+
+          '<div class="vt">▶ 视频作品展示</div>'+
+          '<div class="vd">系列微视频《我的大学，我的期待》（共 4 集）及 25 级建环答辩视频，点击下方按钮切换播放</div>'+
+          '<video id="skillMainVideo" controls preload="metadata" style="width:100%;max-width:680px;border-radius:10px;background:#000;outline:none" src="'+releaseVideoUrl(videoItems[0].file)+'"></video>'+
+          '<div class="video-list">'+videoButtonsHtml+'</div>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  document.querySelectorAll('.vbtn').forEach(function(btn){
+    btn.addEventListener('click', function(){ switchSkillVideo(btn, btn.dataset.src); });
+  });
+  Object.keys(navs).forEach(function(k){ navs[k].classList.remove('active'); });
+  showPage('detail');
+}
+
+/* ========= 图片放大 ========= */
+function openMedia(src){
+  var overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:24px';
+  var img = document.createElement('img');
+  img.src = src;
+  img.style.cssText = 'max-width:90%;max-height:90%;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,.5)';
+  overlay.appendChild(img);
+  overlay.onclick = function(){ document.body.removeChild(overlay); };
+  document.body.appendChild(overlay);
+}
+
+function releaseVideoUrl(fileName){
+  var owner = location.hostname.endsWith('.github.io') ? location.hostname.split('.')[0] : 'wxiinyi';
+  return 'https://github.com/'+owner+'/Wxiiny-jianjie/releases/download/media-v1/'+encodeURIComponent(fileName);
+}
+
+function switchSkillVideo(btn, src){
+  var v = document.getElementById('skillMainVideo');
+  if(v){ v.src = src; v.load(); v.play(); }
+  document.querySelectorAll('.vbtn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+</script>
+
+</body>
+</html>
